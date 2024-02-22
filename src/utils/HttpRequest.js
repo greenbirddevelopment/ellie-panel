@@ -11,7 +11,7 @@ export default class HttpRequest {
     if (api === "panel")
       this.#url =
         process.env.REACT_APP_PANEL_BACKEND_API ||
-        "http://35.157.165.146:8001/api";
+        "https://ellie-panel-api-dev.elliesupport.com/api";
 
     if (api === "cloud")
       this.#url =
@@ -53,7 +53,7 @@ export default class HttpRequest {
       return e.response.data;
     }
   }
-  
+
   async update(userId, endpoint, payload) {
     try {
       console.log(`${this.#url}/${endpoint}/${userId} in update Request`);
