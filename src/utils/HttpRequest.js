@@ -8,17 +8,12 @@ export default class HttpRequest {
   }
 
   #switchAPI(api) {
-    if (api === "panel")
-      this.#url =
-        process.env.REACT_APP_PANEL_BACKEND_API ||
-        "https://ellie-panel-api-dev.elliesupport.com/api";
+    if (api === "panel") this.#url = process.env.REACT_APP_PANEL_BACKEND_API;
 
     if (api === "cloud")
       this.#url =
         process.env.REACT_APP_CLOUD_BACKEND_API ||
-        "http://35.157.165.146:80/api";
-
-    console.log("Current API: ", this.#url);
+        console.log("Current API: ", this.#url);
   }
 
   async get(endpoint, payload) {
