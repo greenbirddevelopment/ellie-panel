@@ -9,11 +9,7 @@ export default class HttpRequest {
 
   #switchAPI(api) {
     if (api === "panel") this.#url = process.env.REACT_APP_PANEL_BACKEND_API;
-
-    if (api === "cloud")
-      this.#url =
-        process.env.REACT_APP_CLOUD_BACKEND_API ||
-        console.log("Current API: ", this.#url);
+    if (api === "cloud") this.#url = process.env.REACT_APP_CLOUD_BACKEND_API;
   }
 
   async get(endpoint, payload) {
