@@ -10,8 +10,6 @@ import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import HttpRequest from "../../utils/HttpRequest";
 import useInput from "../../hooks/useInput";
 
-// ? Checking Raspberry PI will be implemented
-
 const DevicesForm = ({
   handlePreviousFormStage,
   handleCreateNativeBackend,
@@ -158,6 +156,20 @@ const DevicesForm = ({
             setSensibo={setSensibo}
             handleClearSelectedDevice={handleClearSelectedDevice}
           />
+        )}
+      </div>
+
+      <div className="mb-6">
+        {hue.bridges.length !== 0 && hue.lights.length !== 0 && (
+          <ul>
+            <h1>HUES</h1>
+            {[...hue.bridges, ...hue.lights].map((hue, index) => (
+              <li>
+                <span>Bridge Id: {hue.bridgeId}</span>
+                <span>Hue Application Key: {hue.hueApplicationKey}</span>
+              </li>
+            ))}
+          </ul>
         )}
       </div>
 

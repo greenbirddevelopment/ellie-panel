@@ -24,10 +24,10 @@ const SignupPage = () => {
   const navigate = useNavigate();
   const [currentFormStage, setCurrentFormState] = useState(0);
   const [remainingFormStage, setRemainingFormStage] = useState(3);
-  const setupSliceState = useSelector((state) => state.setup);
+  const setupState = useSelector((state) => state.setup);
   const dispatch = useDispatch();
 
-  const { user, house, nativeBackend } = setupSliceState;
+  const { user, house, nativeBackend } = setupState;
 
   console.log("user", user);
   console.log("house", house);
@@ -75,21 +75,17 @@ const SignupPage = () => {
         dispatch(setupSliceActions.setHouse(null));
         dispatch(setupSliceActions.setNativeBackend(null));
 
-        setTimeout(() => navigate("/"), 1000);
+        setTimeout(() => navigate("/"), 1200);
       }
     },
   });
 
-  const handleSetup = () => {
+  const handleSetup = () =>
     mutationSetup.mutate({ user, house, nativeBackend });
-  };
 
   useEffect(() => {
     if (!currentUser) navigate("/");
   }, [currentUser, navigate]);
-
-  console.log("currentFormStage", currentFormStage);
-  console.log("remainingFormStage", remainingFormStage);
 
   return (
     <>
