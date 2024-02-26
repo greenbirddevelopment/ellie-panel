@@ -13,7 +13,7 @@ const Layout = () => {
           "lg:border lg:rounded lg:shadow lg:py-24 lg:px-16 overflow-hidden"
         }
       >
-        <header className="mb-12 flex justify-center items-center ">
+        <header className="mb-12 flex justify-center items-center ellie-header">
           <Container
             className={"relative flex items-center justify-center !w-full"}
           >
@@ -32,7 +32,7 @@ const Layout = () => {
               <h1 id="brand" className="text-6xl">
                 <Link to={"/"}>ELLIE</Link>
               </h1>
-              <p className="text-sm text-gray-500 font-semibold">
+              <p className="text-sm text-gray-500 font-semibold ">
                 Smart Home Systems
               </p>
             </section>
