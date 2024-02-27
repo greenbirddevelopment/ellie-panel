@@ -8,8 +8,15 @@ export default class HttpRequest {
   }
 
   #switchAPI(api) {
-    if (api === "panel") this.#url = process.env.REACT_APP_PANEL_BACKEND_API;
-    if (api === "cloud") this.#url = process.env.REACT_APP_CLOUD_BACKEND_API;
+    if (api === "panel") {
+      this.#url = process.env.REACT_APP_PANEL_BACKEND_API;
+      // this.#url = "http://localhost:8000/api";
+    }
+
+    if (api === "cloud") {
+      this.#url = process.env.REACT_APP_CLOUD_BACKEND_API;
+      // this.#url = "http://localhost:8001/api";
+    }
   }
 
   async get(endpoint, payload) {
