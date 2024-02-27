@@ -1,6 +1,6 @@
 import { useQuery } from "react-query";
 import { useParams } from "react-router";
-import { Form, useNavigate, useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import HttpRequest from "../utils/HttpRequest";
 import useInput from "../hooks/useInput";
 import Spinner from "../components/ui/Spinner";
@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import Button from "../components/ui/Button";
-import axios from "axios";
+import { useSelector } from "react-redux";
 
 const getUser = (username) =>
   new HttpRequest("cloud").get(`users/${username}`, username);
@@ -21,6 +21,9 @@ const httpRequest = new HttpRequest("cloud");
 const UserDetailPage = () => {
   const [isSuccess, setIsSuccess] = useState(null);
   const navigate = useNavigate();
+
+  const currentUserState = useSelector((state) => state.currentUser);
+  const { currentUser } = currentUserState;
 
   const params = useParams();
   const [deviceList, setDeviceList] = useState([]);
@@ -174,82 +177,14 @@ const UserDetailPage = () => {
     },
   });
 
-  
-  useEffect(() => {
-    if (user && user.data && user.data.devices) {
-      console.log(user.data.devices.hueData.bridges[0].hueApplicationKey);
-      const hueDevicesData = user.data.devices.hueData;
-      const { apiKey: shellyApiKey, devices: shellyDevices, cloudUrl } = user.data.devices.shellyData || {};
-      const { apiKey: sensiboApiKey, devices: sensiboDevices } = user.data.devices.sensiboData || {};
-      const combinedDevices = [];
-      if (hueDevicesData) {
-        const { bridges, lights, locations } = hueDevicesData;
-        if (bridges && lights && locations) {
-          console.log(bridges);
-          const processedHueDevices = lights.map((light) => {
-            const { id: lightId, location: roomSelection, bridgeId } = light;
-            console.log(light.lightId);
-            const hueApplicationKey = bridges.find(
-              (bridge) => bridge.hueApplicationKey
-            );
-            
-
-            const applicationKey = hueApplicationKey.hueApplicationKey;
-            return {
-              roomSelection,
-              lightId,
-              applicationKey,
-              bridgeId,
-            };
-          });
-          combinedDevices.push(
-            ...processedHueDevices.map((hueDevice) => ({ hue: hueDevice }))
-          );
-        } else {
-          console.error("Hue data is incomplete or undefined.");
-        }
-      }
-      if (shellyApiKey && shellyDevices && cloudUrl) {
-        const processedShellyDevices = shellyDevices.map((device) => ({
-          roomSelection: device.location,
-          applicationKey: shellyApiKey,
-          cloudUrl: cloudUrl,
-          
-        }));
-        combinedDevices.push(
-          ...processedShellyDevices.map((shellyDevice) => ({
-            shelly: shellyDevice,
-          }))
-        );
-      }
-      if (sensiboApiKey && sensiboDevices) {
-        const processedSensiboDevices = sensiboDevices.map((device) => ({
-          roomSelection: device.location,
-          apiKey: sensiboApiKey,
-          deviceId: device.id,
-        }));
-        combinedDevices.push(
-          ...processedSensiboDevices.map((sensiboDevice) => ({
-            sensibo: sensiboDevice,
-          }))
-        );
-      }
-
-      setDeviceList(combinedDevices);
-    }
-    if (user && user.data && user.data.user) {
-      setUserId(user.data.user.id);
-    }
-  }, [user]);
-
-
-
   console.log("user: ", user);
 
   console.log(deviceList);
+
   const handleDeleteDevice = (index) => {
     setDeviceList((prevList) => prevList.filter((_, i) => i !== index));
   };
+
   const handleAddDevice = () => {
     if (deviceSelection === "hue") {
       if (lightId && applicationKey && bridgeId) {
@@ -321,14 +256,20 @@ const UserDetailPage = () => {
     apiKeyOnChange({ target: { name: "apiKey", value: "" } });
     cloudUrlOnChange({ target: { name: "cloudUrl", value: "" } });
   };
+
   console.log(deviceList);
+
   const updateUser = async () => {
     try {
       const formData = {
         user: {
-          firstname: !firstnameValue? user.data.user.firstname : firstnameValue,
+          firstname: !firstnameValue
+            ? user.data.user.firstname
+            : firstnameValue,
           lastname: !lastnameValue ? user.data.user.lastname : lastnameValue,
-          phone: !phoneValue.replace(/\s/g, "") ? user.data.user.phone.replace(/\s/g, "") : phoneValue.replace(/\s/g, ""),
+          phone: !phoneValue.replace(/\s/g, "")
+            ? user.data.user.phone.replace(/\s/g, "")
+            : phoneValue.replace(/\s/g, ""),
           username: !usernameValue ? user.data.user.username : usernameValue,
           email: !emailValue ? user.data.user.email : emailValue,
         },
@@ -358,11 +299,13 @@ const UserDetailPage = () => {
               .filter((device) => device.hasOwnProperty("hue"))
               .map((device) => ({
                 [device.hue.roomSelection]: {
-                  groupId: Object.values(user.data.nativeBackendId.hue.locations)[0].groupId,
+                  groupId: Object.values(
+                    user.data.nativeBackendId.hue.locations
+                  )[0].groupId,
                   bridgeId: device.hue.bridgeId,
                   partyMode: false,
                 },
-              })) 
+              }))
           ),
         },
         sensibo: {
@@ -376,8 +319,10 @@ const UserDetailPage = () => {
             .sensibo?.apiKey,
         },
         shelly: {
-          apiKey: deviceList.find((device) => device.hasOwnProperty("shelly")).shelly.apiKey,
-          cloudUrl: deviceList.find((device) => device.hasOwnProperty("shelly")).shelly.cloudUrl,
+          apiKey: deviceList.find((device) => device.hasOwnProperty("shelly"))
+            .shelly.apiKey,
+          cloudUrl: deviceList.find((device) => device.hasOwnProperty("shelly"))
+            .shelly.cloudUrl,
           devices: deviceList
             .filter((device) => device.hasOwnProperty("shelly"))
             .map((device) => ({
@@ -387,14 +332,15 @@ const UserDetailPage = () => {
               online: false,
             })),
         },
-        
       };
-      
+
       const response = await httpRequest.post(
         `users/update/${userId}`,
         formData
       );
+
       setIsSuccess(true);
+
       console.log("data: ", response);
       navigate("/");
     } catch (error) {
@@ -402,7 +348,82 @@ const UserDetailPage = () => {
       console.log("hata: ", error);
     }
   };
+
   console.log("formData: ", deviceList);
+
+  useEffect(() => {
+    if (user && user.data && user.data.devices) {
+      console.log(user.data.devices.hueData.bridges[0].hueApplicationKey);
+      const hueDevicesData = user.data.devices.hueData;
+      const {
+        apiKey: shellyApiKey,
+        devices: shellyDevices,
+        cloudUrl,
+      } = user.data.devices.shellyData || {};
+      const { apiKey: sensiboApiKey, devices: sensiboDevices } =
+        user.data.devices.sensiboData || {};
+      const combinedDevices = [];
+      if (hueDevicesData) {
+        const { bridges, lights, locations } = hueDevicesData;
+        if (bridges && lights && locations) {
+          console.log(bridges);
+          const processedHueDevices = lights.map((light) => {
+            const { id: lightId, location: roomSelection, bridgeId } = light;
+            console.log(light.lightId);
+            const hueApplicationKey = bridges.find(
+              (bridge) => bridge.hueApplicationKey
+            );
+
+            const applicationKey = hueApplicationKey.hueApplicationKey;
+            return {
+              roomSelection,
+              lightId,
+              applicationKey,
+              bridgeId,
+            };
+          });
+          combinedDevices.push(
+            ...processedHueDevices.map((hueDevice) => ({ hue: hueDevice }))
+          );
+        } else {
+          console.error("Hue data is incomplete or undefined.");
+        }
+      }
+      if (shellyApiKey && shellyDevices && cloudUrl) {
+        const processedShellyDevices = shellyDevices.map((device) => ({
+          roomSelection: device.location,
+          applicationKey: shellyApiKey,
+          cloudUrl: cloudUrl,
+        }));
+        combinedDevices.push(
+          ...processedShellyDevices.map((shellyDevice) => ({
+            shelly: shellyDevice,
+          }))
+        );
+      }
+      if (sensiboApiKey && sensiboDevices) {
+        const processedSensiboDevices = sensiboDevices.map((device) => ({
+          roomSelection: device.location,
+          apiKey: sensiboApiKey,
+          deviceId: device.id,
+        }));
+        combinedDevices.push(
+          ...processedSensiboDevices.map((sensiboDevice) => ({
+            sensibo: sensiboDevice,
+          }))
+        );
+      }
+
+      setDeviceList(combinedDevices);
+    }
+    if (user && user.data && user.data.user) {
+      setUserId(user.data.user.id);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (!currentUser) navigate("/home");
+  }, [currentUser, navigate]);
 
   return (
     <>

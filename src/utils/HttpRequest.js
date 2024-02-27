@@ -8,14 +8,14 @@ export default class HttpRequest {
   }
 
   #switchAPI(api) {
-    if (api === "panel") {
-      this.#url = process.env.REACT_APP_PANEL_BACKEND_API;
-      // this.#url = "http://localhost:8000/api";
+    if (api === "cloud") {
+      // this.#url = process.env.REACT_APP_CLOUD_BACKEND_API;
+      this.#url = "http://localhost:8000/api";
     }
 
-    if (api === "cloud") {
-      this.#url = process.env.REACT_APP_CLOUD_BACKEND_API;
-      // this.#url = "http://localhost:8001/api";
+    if (api === "panel") {
+      // this.#url = process.env.REACT_APP_PANEL_BACKEND_API;
+      this.#url = "http://localhost:8001/api";
     }
   }
 
@@ -52,19 +52,19 @@ export default class HttpRequest {
     }
   }
 
-  async update(userId, endpoint, payload) {
-    try {
-      console.log(`${this.#url}/${endpoint}/${userId} in update Request`);
+  // async update(userId, endpoint, payload) {
+  //   try {
+  //     console.log(`${this.#url}/${endpoint}/${userId} in update Request`);
 
-      const response = await axios.post(`${this.#url}/${endpoint}/${userId}`, {
-        ...payload,
-      });
+  //     const response = await axios.post(`${this.#url}/${endpoint}/${userId}`, {
+  //       ...payload,
+  //     });
 
-      console.log(response.data);
-      return response.data;
-    } catch (e) {
-      console.error(e.response.data);
-      return e.response.data;
-    }
-  }
+  //     console.log(response.data);
+  //     return response.data;
+  //   } catch (e) {
+  //     console.error(e.response.data);
+  //     return e.response.data;
+  //   }
+  // }
 }
