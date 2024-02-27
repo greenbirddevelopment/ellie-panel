@@ -7,36 +7,34 @@ const Layout = () => {
   const location = useLocation();
 
   return (
-    <div className="App lg:my-24 overflow-hidden">
+    <div className="App lg:my-24 overflow-hidden border border-red-500">
       <Container
         className={
           "lg:border lg:rounded lg:shadow lg:py-24 lg:px-16 overflow-hidden"
         }
       >
-        <header className="mb-12 flex justify-center items-center ellie-header">
-          <Container
-            className={"relative flex items-center justify-center !w-full"}
-          >
+        <header className="relative mb-12 flex justify-center items-center text-center">
+          <section className="absolute top-1/2 left-0 -translate-y-1/2">
             {location.pathname !== "/home" && location.pathname !== "/" && (
               <Link
                 to={"/"}
                 className={
-                  "absolute flex items-center gap-2 left-0 top-0 cursor-pointer back"
+                  " flex items-center gap-2 left-0 top-0 cursor-pointer"
                 }
               >
                 <FontAwesomeIcon icon={faAngleLeft} size="lg" className="" />
                 <span className="font-bold">Back</span>
               </Link>
             )}
-            <section className="text-center ellie-header">
-              <h1 id="brand" className="text-6xl">
-                <Link to={"/"}>ELLIE</Link>
-              </h1>
-              <p className="text-sm text-gray-500 font-semibold ">
-                Smart Home Systems
-              </p>
-            </section>
-          </Container>
+          </section>
+          <section id="brand">
+            <h1 className="text-6xl">
+              <Link to={"/"}>ELLIE</Link>
+            </h1>
+            <p className="text-sm text-gray-500 font-semibold ">
+              Smart Home Systems
+            </p>
+          </section>
         </header>
         <main>
           <Outlet />
