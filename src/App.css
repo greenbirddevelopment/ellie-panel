@@ -10,20 +10,9 @@ body {
   overflow-x: hidden;
 }
 
-.back {
-  /* margin-top: 7vh; */
-}
-
-.ellie-header {
-  /* margin-top: 10%; */
-}
-
 @media (max-width: 600px) {
   .signup {
     max-width: 90%;
-  }
-  .back {
-    /* margin-bottom: 10vh; */
   }
 }
 

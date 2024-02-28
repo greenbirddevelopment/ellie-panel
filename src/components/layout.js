@@ -7,7 +7,7 @@ const Layout = () => {
   const location = useLocation();
 
   return (
-    <div className="App lg:my-24 overflow-hidden border border-red-500">
+    <div className="App lg:my-24 overflow-hidden">
       <Container
         className={
           "lg:border lg:rounded lg:shadow lg:py-24 lg:px-16 overflow-hidden"
